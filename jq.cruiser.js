@@ -1,3 +1,13 @@
+/**
+ * jQuery plugin for selecting range of table cells
+ *
+ * @version: 1.0 - (2015/01/20)
+ * @requires jQuery
+ * @author Ivan Lazarevic
+ *
+ * Licensed under MIT licence:
+ *   http://www.opensource.org/licenses/mit-license.php
+ */
 (function($) {
 
 
@@ -8,14 +18,15 @@
             O = [],
             defaults = {
                 bgColor: 'rgba(160, 195, 255, 0.2)',
-                border: '1px solid #4285f4',
+                borderColor: '#4285f4',
                 handleColor: '#4285f4'
             };
 
         function init(that) {
 
-            var options = $.extend({}, defaults, options),
-                $wrapper = $('<div />').addClass('cruiser-wrapper').css({
+            options = $.extend({}, defaults, options);
+
+            var $wrapper = $('<div />').addClass('cruiser-wrapper').css({
                     position: 'relative'
                 }),
                 $selector = $('<div />').css({
@@ -26,7 +37,7 @@
                     position: 'absolute',
                     zIndex: 2,
                     display: 'none',
-                    border: options.border
+                    border: '1px solid ' + options.borderColor
                 }).addClass('cruiser-border'),
                 $handle = $('<div />').css({
                     position: 'absolute',
@@ -35,6 +46,7 @@
                     height: '6px',
                     width: '6px',
                     cursor: 'crosshair',
+                    border: '1px solid #fff',
                     background: options.handleColor
                 }).addClass('cruiser-handle');
 
@@ -58,6 +70,7 @@
             };
 
             counter++;
+
 
             /**
              * Mouse down, start selecting
@@ -91,7 +104,6 @@
             });
 
 
-
             /**
              * draw selected area when mouse is moving
              * it's a div behind whole table
@@ -118,6 +130,7 @@
 
             });
 
+
             /**
              * if we click on handle holder
              * selecting is reset
@@ -135,6 +148,7 @@
                 cruiserEnd(that);
             });
 
+
             /**
              * mouse down on handle start resizing
              */
@@ -146,14 +160,17 @@
 
             });
 
+
             /**
              * holding alt key and click on cell will select whole row
              */
             $(that).find('td').click(function(e) {
+
                 if (e.altKey) {
-                    var $parent = $(this).parent();
-                    var $start = $parent.find('td:first-child');
-                    var $end = $parent.find('td:last-child');
+
+                    var $parent = $(this).parent(),
+                        $start = $parent.find('td:first-child'),
+                        $end = $parent.find('td:last-child');
 
                     O[active].$start = $start;
 
@@ -174,18 +191,21 @@
                     $(that).parent().find('.cruiser-border').show();
 
                 }
+
             });
+
 
             /**
              * Clicking on header will select whole column
              */
             $(that).find('th').click(function(e) {
 
-                var $parent = $(this).parent();
-                var $start = $parent.find('td:first-child');
-                var $end = $parent.find('td:last-child');
+                var $parent = $(this).parent(),
+                    $start = $parent.find('td:first-child'),
+                    $end = $parent.find('td:last-child'),
+                    col = $(this)[0].cellIndex;
 
-                var col = $(this)[0].cellIndex;
+                active = $(that).data('cruiserCounter');
 
                 O[active].$start = $start;
 
@@ -211,12 +231,14 @@
 
         }
 
+
         /**
          * Trigger selecting end event
          */
         function cruiserEnd(elem) {
             $(elem).trigger('cruiserEnd', O[active].range);
         }
+
 
         /**
          * Draw selector div
@@ -269,18 +291,22 @@
 
         }
 
+
         /**
          * Mouse up ends selecting
          */
         $(document).mouseup(function(e) {
 
-            if (!O[active].range.start || e.altKey) {
+            if (!O[active] || !O[active].range.start || e.altKey) {
                 return;
             } else {
                 O[active].done = true;
                 if (!O[active].range.end) {
                     // select only one
-                    O[active].range.end = O[active].range.start;
+                    O[active].range.end = {
+                        col: O[active].range.start.col,
+                        row: O[active].range.start.row
+                    };
                     var $elem = $(e.target),
                         height = $elem.outerHeight(),
                         width = $elem.outerWidth();
@@ -302,6 +328,9 @@
                         width: width - 1
                     });
                     O[active].border.show();
+
+                    cruiserEnd(O[active].elem);
+
                     return;
                 }
             }
@@ -361,6 +390,20 @@
                 }
 
                 select();
+
+            }
+
+        });
+
+
+        /**
+         * Trigger cruiserEnd when shift is released
+         * in case that user select with keyboard
+         */
+        $('body').keyup(function(e) {
+
+            if (e.keyCode === 16 && O[active].elem) {
+
                 cruiserEnd(O[active].elem);
 
                 O[active].border.show();
@@ -369,8 +412,9 @@
 
         });
 
+
         /**
-         * Init crueser for all elements
+         * Init cruiser for all elements
          */
         return this.each(function() {
             init(this);
