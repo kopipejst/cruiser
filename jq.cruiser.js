@@ -1,22 +1,48 @@
 (function($) {
 
 
-    $.fn.cruiser = function() {
+    $.fn.cruiser = function(options) {
 
         var counter = 1,
             active = 0,
-            O = [];
+            O = [],
+            defaults = {
+                bgColor: 'rgba(160, 195, 255, 0.2)',
+                border: '1px solid #4285f4',
+                handleColor: '#4285f4'
+            };
 
-        init = function(that) {
+        function init(that) {
 
+            var options = $.extend({}, defaults, options),
+                $wrapper = $('<div />').addClass('cruiser-wrapper').css({
+                    position: 'relative'
+                }),
+                $selector = $('<div />').css({
+                    position: 'absolute',
+                    background: options.bgColor
+                }).addClass('cruiser-selector'),
+                $border = $('<div />').css({
+                    position: 'absolute',
+                    zIndex: 2,
+                    display: 'none',
+                    border: options.border
+                }).addClass('cruiser-border'),
+                $handle = $('<div />').css({
+                    position: 'absolute',
+                    bottom: '-4px',
+                    right: '-4px',
+                    height: '6px',
+                    width: '6px',
+                    cursor: 'crosshair',
+                    background: options.handleColor
+                }).addClass('cruiser-handle');
 
-            var $wrapper = $('<div />').addClass('cruiser-wrapper').css({
-                position: 'relative'
-            });
+            $border.append($handle);
 
             $(that).wrap($wrapper).data('cruiserCounter', counter);
 
-            $(that).parent().prepend($('<div class="selector"></div><div class="border"><div class="handle"></div></div>'));
+            $(that).parent().prepend($selector).append($border);
 
             O[counter] = {
                 range: {
@@ -26,13 +52,16 @@
                     col: $(that).find('tr:first-child td').length,
                     row: $(that).find('tr').length
                 },
-                border: $(that).parent().find('.border'),
-                selector: $(that).parent().find('.selector'),
+                border: $(that).parent().find('.cruiser-border'),
+                selector: $(that).parent().find('.cruiser-selector'),
                 elem: that
             };
 
             counter++;
 
+            /**
+             * Mouse down, start selecting
+             */
             $(that).find('td').mousedown(function(e) {
 
                 if (e.altKey) {
@@ -41,7 +70,7 @@
 
                 active = $(that).data('cruiserCounter');
 
-                $(that).parent().find('.border').hide();
+                $(that).parent().find('.cruiser-border').hide();
                 var column = this.cellIndex;
                 var row = this.parentNode.rowIndex;
                 O[active].range.start = {
@@ -51,7 +80,7 @@
 
                 O[active].$start = $(this);
 
-                $(that).parent().find('.selector, .border').css({
+                $(that).parent().find('.cruiser-selector, .cruiser-border').css({
                     top: $(this).position().top - 1,
                     left: $(this).position().left - 1,
                     height: 0,
@@ -63,8 +92,10 @@
 
 
 
-            // draw selected area
-            // it's a div behind whole table
+            /**
+             * draw selected area when mouse is moving
+             * it's a div behind whole table
+             */
             $(that).find('td').mousemove(function(e) {
 
                 if (active === 0 || !O[active].range.start) {
@@ -87,9 +118,13 @@
 
             });
 
-            $(that).parent().find('.border').click(function() {
+            /**
+             * if we click on handle holder
+             * selecting is reset
+             */
+            $(that).parent().find('.cruiser-border').click(function() {
                 $(this).hide();
-                $(that).parent().find('.selector').css({
+                $(that).parent().find('.cruiser-selector').css({
                     width: 0,
                     height: 0
                 });
@@ -100,15 +135,20 @@
                 cruiserEnd(that);
             });
 
-            $(that).parent().find('.handle').mousedown(function() {
-                $(that).parent().find('.border').hide();
+            /**
+             * mouse down on handle start resizing
+             */
+            $(that).parent().find('.cruiser-handle').mousedown(function() {
+                $(that).parent().find('.cruiser-border').hide();
                 active = $(that).data('cruiserCounter');
                 delete O[active].range.end;
                 delete O[active].done;
 
             });
 
-            // select whole row
+            /**
+             * holding alt key and click on cell will select whole row
+             */
             $(that).find('td').click(function(e) {
                 if (e.altKey) {
                     var $parent = $(this).parent();
@@ -131,12 +171,14 @@
                     select();
                     cruiserEnd(that);
 
-                    $(that).parent().find('.border').show();
+                    $(that).parent().find('.cruiser-border').show();
 
                 }
             });
 
-            // select whole column
+            /**
+             * Clicking on header will select whole column
+             */
             $(that).find('th').click(function(e) {
 
                 var $parent = $(this).parent();
@@ -163,17 +205,22 @@
                 select();
                 cruiserEnd(that);
 
-                $(that).parent().find('.border').show();
+                $(that).parent().find('.cruiser-border').show();
 
             });
 
-        };
+        }
 
+        /**
+         * Trigger selecting end event
+         */
         function cruiserEnd(elem) {
             $(elem).trigger('cruiserEnd', O[active].range);
         }
 
-        // Draw selector div
+        /**
+         * Draw selector div
+         */
         function select($end) {
 
             $end = $end || $(O[active].elem).find("tr:eq(" + O[active].range.end.row + ") td:eq(" + O[active].range.end.col + ")");
@@ -222,6 +269,9 @@
 
         }
 
+        /**
+         * Mouse up ends selecting
+         */
         $(document).mouseup(function(e) {
 
             if (!O[active].range.start || e.altKey) {
@@ -256,7 +306,7 @@
                 }
             }
 
-            // check if elem is table element
+            // @TODO check if elem is table element
             O[active].border.show();
 
             var tmp;
@@ -280,7 +330,9 @@
         });
 
 
-        // extend selection with keyboard
+        /**
+         * extend selection with keyboard
+         */
         $('body').keydown(function(e) {
 
             if (e.shiftKey && O[active].range.start && e.keyCode !== 16) {
@@ -317,14 +369,14 @@
 
         });
 
-
+        /**
+         * Init crueser for all elements
+         */
         return this.each(function() {
             init(this);
         });
 
     };
-
-
 
 
 })(jQuery);

@@ -1,0 +1,388 @@
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="jq.cruiser.js"></script>
+    <style>
+        body,
+        table td {
+            padding: 40px;
+            margin: 0;
+            font-family: "Proxima Nova","Proxima-Nova",Helvetica Neue,Helvetica,Arial,sans-serif;
+            font-size: 14px;
+        }
+
+        .page {
+            padding: 30px;
+        }
+
+        table td,
+        table th {
+            border: 1px solid #ccc;
+            border-width: 0 1px 1px 0;
+            padding: 5px 10px;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        table {
+            border-spacing: 0;
+            border-collapse: separate;
+            position: relative;
+            cursor: default;
+        }
+        .selector {
+            background-color: rgb(160, 195, 255);
+            opacity: 0.2;
+            position: absolute;
+        }
+        .border {
+            border: 1px solid #4285f4;
+            position: absolute;
+            z-index: 2;
+            display: none;
+        }
+        .handle {
+            position: absolute;
+            bottom: -4px;
+            right: -4px;
+            height: 6px;
+            width: 6px;
+            border: 1px solid #fff;
+            background-color: #4285f4;
+            cursor: crosshair;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Select range of cells</h1>
+
+<div class="page">
+    <div class="holder">
+
+
+
+        <table class="selectable">
+            <thead>
+                <tr>
+                    <th>header 1</th>
+                    <th>header 2</th>
+                    <th>header 3</th>
+                    <th>header 4</th>
+                    <th>header 5</th>
+                    <th>header 6</th>
+                    <th>header 7</th>
+                    <th>header 8</th>
+                    <th>header 9</th>
+                    <th>header 10</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                </tr>
+                <tr>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                </tr>
+                <tr>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                </tr>
+                <tr>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                </tr>
+                <tr>
+                    <td>cell 13423432434324</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                </tr>
+                <tr>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5 ivana memlicka</td>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                </tr>
+                <tr>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                </tr>
+                <tr>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3 <br />second row<br />third row</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                </tr>
+                <tr>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3<br >pacarko najveci na svetu</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                </tr>
+                <tr>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                </tr>
+                <tr>
+                    <td>cell 13423432434324</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                </tr>
+                <tr>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5 ivana memlicka</td>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                </tr>
+                <tr>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                </tr>
+                <tr>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3 <br />second row<br />third row</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                </tr>
+                <tr>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3<br >pacarko najveci na svetu</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                </tr>
+                <tr>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+        <table class="selectable">
+            <thead>
+                <tr>
+                    <th>header 1</th>
+                    <th>header 2</th>
+                    <th>header 3</th>
+                    <th>header 4</th>
+                    <th>header 5</th>
+                    <th>header 6</th>
+                    <th>header 7</th>
+                    <th>header 8</th>
+                    <th>header 9</th>
+                    <th>header 10</th>
+                    <th>header 1</th>
+                    <th>header 2</th>
+                    <th>header 3</th>
+                    <th>header 4</th>
+                    <th>header 5</th>
+                    <th>header 6</th>
+                    <th>header 7</th>
+                    <th>header 8</th>
+                    <th>header 9</th>
+                    <th>header 10</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                </tr>
+                <tr>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                </tr>
+                <tr>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                    <td>cell 1</td>
+                    <td>cell 2</td>
+                    <td>cell 3</td>
+                    <td>cell 4</td>
+                    <td>cell 5</td>
+                </tr>
+
+            </tbody>
+        </table>
+
+alt + click = select whole row
+
+<script>
+    $('.selectable').cruiser().on('cruiserEnd', function (e, range) {
+        console.log(range);
+
+    });
+</script>
+
+</body>
+</html>
